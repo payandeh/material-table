@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import Checkbox from "@material-ui/core/Checkbox";
+import Icon from "@material-ui/core/Icon";
+import IconButton from "@material-ui/core/IconButton";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
-import IconButton from "@material-ui/core/IconButton";
-import Icon from "@material-ui/core/Icon";
 import Tooltip from "@material-ui/core/Tooltip";
 import PropTypes from "prop-types";
 import * as React from "react";
@@ -14,10 +14,7 @@ export default class MTableBodyRow extends React.Component {
   renderColumns() {
     const size = CommonValues.elementSize(this.props);
     const mapArr = this.props.columns
-      .filter(
-        (columnDef) =>
-          !columnDef.hidden && !(columnDef.tableData.groupOrder > -1)
-      )
+      .filter((columnDef) => !columnDef.hidden)
       .sort((a, b) => a.tableData.columnOrder - b.tableData.columnOrder)
       .map((columnDef, index) => {
         const value = this.props.getFieldValue(this.props.data, columnDef);
@@ -66,7 +63,11 @@ export default class MTableBodyRow extends React.Component {
               }
               rowData={this.props.data}
               cellEditable={
-                columnDef.editable !== "never" && !!this.props.cellEditable
+                columnDef.editable !== "never" &&
+                ((typeof columnDef.editable === "function" &&
+                  !!columnDef.editable(columnDef, this.props.data)) ||
+                  typeof columnDef.editable !== "function") &&
+                !!this.props.cellEditable
               }
               onCellEditStarted={this.props.onCellEditStarted}
               scrollWidth={this.props.scrollWidth}
